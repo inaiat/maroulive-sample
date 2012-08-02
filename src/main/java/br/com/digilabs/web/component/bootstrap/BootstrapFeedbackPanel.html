@@ -18,10 +18,10 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <body>
     <wicket:panel>
-        <div wicket:id="feedbackDiv">
+        <div wicket:id="feedbackul">
             <div wicket:id="messages" class="alert alert-error">
                 <a class="close" data-dismiss="alert">×</a>
-                <span wicket:id="message">A message</span>
+                <wicket:container wicket:id="message">A message</wicket:container>
             </div>
         </div>
     </wicket:panel>
