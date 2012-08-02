@@ -16,7 +16,6 @@
 package br.com.digilabs.web.component.bootstrap;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.bootstrap.Bootstrap;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -51,10 +50,6 @@ public class BootstrapModalPanel extends Panel {
         AttributeModifier attr = new AttributeModifier("class", cssClass);
         tag.addBehavior(attr);
         super.onComponentTag(tag);
-    }
-
-    public void hide(AjaxRequestTarget target) {
-        target.appendJavaScript("$('#" + this.getMarkupId(true) + "').modal('hide')");
     }
 
     @Override
