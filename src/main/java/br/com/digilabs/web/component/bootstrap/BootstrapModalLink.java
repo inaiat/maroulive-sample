@@ -47,10 +47,6 @@ public class BootstrapModalLink extends WebMarkupContainer {
 		AttributeModifier dataToggle = new AttributeModifier("data-toggle", "modal");
 		tag.addBehavior(href);
 		tag.addBehavior(dataToggle);
-	}       
-        
- 
-	
-	
+	}    
 
 }
