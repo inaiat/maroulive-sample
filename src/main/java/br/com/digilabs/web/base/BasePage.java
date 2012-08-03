@@ -15,8 +15,8 @@
  */
 package br.com.digilabs.web.base;
 
-import br.com.digilabs.web.component.bootstrap.BootstrapFeedbackPanel;
-import org.apache.wicket.bootstrap.Bootstrap;
+import br.com.digilabs.wicket.bootstrap.Bootstrap;
+import br.com.digilabs.wicket.bootstrap.BootstrapFeedbackPanel;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 

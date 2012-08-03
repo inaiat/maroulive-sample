@@ -16,7 +16,7 @@
  */
 package br.com.digilabs.web.authentication;
 
-import br.com.digilabs.web.component.bootstrap.SignInPanel;
+import br.com.digilabs.wicket.bootstrap.SignInPanel;
 import org.apache.wicket.markup.html.WebPage;
 
 /**

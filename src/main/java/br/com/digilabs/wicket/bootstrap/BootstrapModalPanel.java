@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package br.com.digilabs.web.component.bootstrap;
+package br.com.digilabs.wicket.bootstrap;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.bootstrap.Bootstrap;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Panel;

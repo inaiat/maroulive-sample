@@ -16,7 +16,7 @@
  */
 package br.com.digilabs.web.page;
 
-import br.com.digilabs.web.component.bootstrap.BootstrapModalLink;
+import br.com.digilabs.wicket.bootstrap.BootstrapModalLink;
 import br.com.digilabs.web.base.BasePage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;

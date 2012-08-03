@@ -1,4 +1,4 @@
-package br.com.digilabs.web.component.bootstrap;
+package br.com.digilabs.wicket.bootstrap;
 
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.authentication.IAuthenticationStrategy;

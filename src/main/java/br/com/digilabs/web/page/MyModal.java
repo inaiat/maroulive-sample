@@ -15,8 +15,8 @@
  */
 package br.com.digilabs.web.page;
 
-import br.com.digilabs.web.component.bootstrap.BootstrapModalCloseButton;
-import br.com.digilabs.web.component.bootstrap.BootstrapModalPanel;
+import br.com.digilabs.wicket.bootstrap.BootstrapModalCloseButton;
+import br.com.digilabs.wicket.bootstrap.BootstrapModalPanel;
 
 /**
  *

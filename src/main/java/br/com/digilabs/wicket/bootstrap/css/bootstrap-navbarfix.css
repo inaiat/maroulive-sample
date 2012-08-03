@@ -1,0 +1,12 @@
+/* 
+    Document   : bootstrap-navbarfix
+    Created on : 03/08/2012, 12:08:34
+    Author     : inaiat
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+body {
+    padding-top: 60px; /*60px to make the container go all the way to the bottom of the topbar */
+}
+
