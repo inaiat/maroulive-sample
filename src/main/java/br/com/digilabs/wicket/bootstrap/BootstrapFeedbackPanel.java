@@ -35,6 +35,8 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
  */
 public class BootstrapFeedbackPanel extends FeedbackPanel {
 
+    private static final long serialVersionUID = 3855254884742723577L;
+
     public BootstrapFeedbackPanel(String id) {
         super(id);
     }

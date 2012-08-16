@@ -16,31 +16,32 @@
  */
 package br.com.digilabs.dao;
 
-import org.hibernate.criterion.DetachedCriteria;
-
 import java.io.Serializable;
 import java.util.List;
 
-public interface GenericDao {
+import org.hibernate.criterion.DetachedCriteria;
+import org.springframework.transaction.annotation.Transactional;
 
-    Object load(Class<?> entity, Serializable id);
+@Transactional
+public interface SimpleDao {
+
+    <T> T load(Class<T> entity, Serializable id);
+
+    <T> T get(Class<T> entity, Serializable id);
 
     void update(Object object);
-
+ 
     Serializable save(Object object);
 
     void saveOrUpdate(Object object);
 
     void delete(Object object);
 
-    Object get(Class<?> entity, Serializable id);
+    <T> List<T> getList(Class<T> entity);
 
-    List<?> getList(Class<?> entity);
-
-    List<?> findByCriteria(DetachedCriteria criteria);
+    <T> List<T> findByCriteria(DetachedCriteria criteria);
     
-    Object getUniqueResultByCriteria(DetachedCriteria criteria);    
+    <T> T getUniqueResultByCriteria(Class<T> entity, DetachedCriteria criteria);  
 
-    void initialize(Object proxy);
 
 }

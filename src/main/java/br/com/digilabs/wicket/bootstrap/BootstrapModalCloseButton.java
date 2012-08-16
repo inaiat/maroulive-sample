@@ -26,6 +26,8 @@ import org.apache.wicket.model.IModel;
  */
 public class BootstrapModalCloseButton extends AbstractLink {
 
+    private static final long serialVersionUID = 8669064225493586171L;
+
     public BootstrapModalCloseButton(String id) {
         super(id);
     }

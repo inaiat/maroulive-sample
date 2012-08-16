@@ -22,27 +22,36 @@ import javax.persistence.Entity;
 @Entity
 public class User extends BasicEntity {
 
-    private static final long serialVersionUID = 7374087817728317929L;   
-    
-    private String name;
-    
+    private static final long serialVersionUID = 7374087817728317929L;
+
     private Date dateOfBirth;
 
-	public String getName() {
-		return name;
-	}
+    private String name;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    private Carro carro;
 
-	public Date getDateOfBirth() {
-		return dateOfBirth;
-	}
+    public String getName() {
+	return name;
+    }
 
-	public void setDateOfBirth(Date dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}	
-    
-  
+    public void setName(String name) {
+	this.name = name;
+    }
+
+    public Date getDateOfBirth() {
+	return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+	this.dateOfBirth = dateOfBirth;
+    }
+
+    public Carro getCarro() {
+	return carro;
+    }
+
+    public void setCarro(Carro carro) {
+	this.carro = carro;
+    }
+
 }

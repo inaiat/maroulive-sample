@@ -2,6 +2,8 @@ package br.com.digilabs.web.application;
 
 import br.com.digilabs.web.authentication.SignInPage;
 import br.com.digilabs.web.page.HomePage;
+import br.com.digilabs.web.page.UserPage;
+
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 
@@ -36,6 +38,7 @@ public class WicketApplication extends WebApplication {
 
         mountPage("/login", SignInPage.class);
         mountPage("/home",HomePage.class);
+        mountPage("/user",UserPage.class);
     }
 
 }
