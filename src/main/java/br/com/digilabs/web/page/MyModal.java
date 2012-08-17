@@ -24,7 +24,9 @@ import br.com.digilabs.wicket.bootstrap.BootstrapModalPanel;
  */
 public class MyModal extends BootstrapModalPanel {
 
-    public MyModal(String id) {
+	private static final long serialVersionUID = -6151018040106393016L;
+
+	public MyModal(String id) {
         super(id);
         
         add(new BootstrapModalCloseButton("close"));

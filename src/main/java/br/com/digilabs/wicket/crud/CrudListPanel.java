@@ -15,7 +15,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import br.com.digilabs.dao.SimpleDao;
 import br.com.digilabs.exception.IntegrationException;
 
-public class CrudList<T> extends Panel {
+public class CrudListPanel<T> extends Panel {
 
 	@SpringBean
 	private SimpleDao simpleDao;
@@ -24,17 +24,12 @@ public class CrudList<T> extends Panel {
 
 	private Class<T> entityType;
 
-	public CrudList(String id, final Class<T> entityType) {
+	public CrudListPanel(String id, final Class<T> entityType) {
 		super(id);
-
 		this.entityType = entityType;
-
 		Map<String, CrudUtil.PropertyAndField> propertiesAndFields = CrudUtil.getPropertiesAndFieldsFromBean(entityType);
-
 		add(generateTableHeader("headView", propertiesAndFields));
-
 		add(generateTableContent("tableContent", propertiesAndFields));
-
 	}
 
 	private ListView<CrudUtil.PropertyAndField> generateTableHeader(String id, Map<String, CrudUtil.PropertyAndField> fields) {

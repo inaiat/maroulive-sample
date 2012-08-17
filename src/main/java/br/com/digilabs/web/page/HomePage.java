@@ -30,7 +30,7 @@ public class HomePage extends BasePage {
     public HomePage() {
         MyModal modalPanel = new MyModal("modal");
         UserForm form = new UserForm("form");
-        form.add(new RequiredTextField("name", new PropertyModel<String>(this, "name")));
+        form.add(new RequiredTextField<String>("name", new PropertyModel<String>(this, "name")));
         form.add(new BootstrapModalLink("modalLink", modalPanel));
         add(form);
         add(modalPanel);
@@ -39,7 +39,9 @@ public class HomePage extends BasePage {
 
     private class UserForm extends Form<Void> {
 
-        public UserForm(String id) {
+        private static final long serialVersionUID = -3455251252456718601L;
+
+		public UserForm(String id) {
             super(id);
         }
 
