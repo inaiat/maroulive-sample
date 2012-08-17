@@ -1,6 +1,9 @@
 package br.com.digilabs.domain;
 
-public class Adress extends BasicEntity {
+import javax.persistence.Entity;
+
+@Entity
+public class Address extends BasicEntity {
 	
 	private static final long serialVersionUID = -2814681823692836451L;
 
@@ -19,6 +22,5 @@ public class Adress extends BasicEntity {
 	public void setCity(String city) {
 		this.city = city;
 	}	
-	
 
 }

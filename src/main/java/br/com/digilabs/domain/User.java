@@ -18,6 +18,7 @@ package br.com.digilabs.domain;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 
 @Entity
 public class User extends BasicEntity {
@@ -28,7 +29,8 @@ public class User extends BasicEntity {
 
 	private String name;
 
-	private Adress adress;
+	@OneToOne
+	private Address adress;
 
 	public String getName() {
 		return name;
@@ -46,11 +48,11 @@ public class User extends BasicEntity {
 		this.dateOfBirth = dateOfBirth;
 	}
 
-	public Adress getAdress() {
+	public Address getAdress() {
 		return adress;
 	}
 
-	public void setAdress(Adress adress) {
+	public void setAdress(Address adress) {
 		this.adress = adress;
 	}
 
