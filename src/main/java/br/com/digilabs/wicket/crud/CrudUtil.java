@@ -4,6 +4,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,7 +15,21 @@ import java.util.Map;
 import br.com.digilabs.exception.IntegrationException;
 
 public class CrudUtil {
-	
+
+	public static Map<String, PropertyAndField> getPropertiesAndFieldsFromBean(Class<?> entity) {
+		List<PropertyDescriptor> descriptors = getPropertiesFromBean(entity);
+		Map<String, PropertyAndField> fieldsFromProperties = new HashMap<String, PropertyAndField>(descriptors.size());
+		Map<String, Field> fields = getDeclaredFieldsHierarchy(entity);
+		for (PropertyDescriptor propertyDescriptor : descriptors) {
+			if (fields.containsKey(propertyDescriptor.getName())) {
+				String key = propertyDescriptor.getName();
+				PropertyAndField propertyDescriptorAndField = new PropertyAndField(fields.get(key), propertyDescriptor);
+				fieldsFromProperties.put(key, propertyDescriptorAndField);
+			}
+		}
+		return Collections.unmodifiableMap(fieldsFromProperties);
+	}
+
 	public static Map<String, Field> getFieldsFromPropertiesBean(Class<?> entity) {
 		List<PropertyDescriptor> descriptors = getPropertiesFromBean(entity);
 		Map<String, Field> fieldsFromProperties = new HashMap<String, Field>(descriptors.size());
@@ -27,7 +42,7 @@ public class CrudUtil {
 		return Collections.unmodifiableMap(fieldsFromProperties);
 	}
 
-	public static List<PropertyDescriptor> getPropertiesFromBean(Class<?> entity)  {
+	public static List<PropertyDescriptor> getPropertiesFromBean(Class<?> entity) {
 		BeanInfo beanInfo;
 		try {
 			beanInfo = Introspector.getBeanInfo(entity);
@@ -46,5 +61,54 @@ public class CrudUtil {
 			}
 		}
 		return Collections.unmodifiableMap(fieldsMap);
+	}
+
+	public static Map<String, PropertyDescriptor> getPropertiesMapFromBean(Class<?> entity) {
+		BeanInfo beanInfo;
+		try {
+			beanInfo = Introspector.getBeanInfo(entity);
+		} catch (IntrospectionException e) {
+			throw new IntegrationException(e);
+		}
+		PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+		Map<String, PropertyDescriptor> propertyDescriptorMap = new HashMap<String, PropertyDescriptor>();
+		for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+			propertyDescriptorMap.put(propertyDescriptor.getName(), propertyDescriptor);
+		}
+
+		return Collections.unmodifiableMap(propertyDescriptorMap);
+	}
+
+	public static class PropertyAndField implements Serializable {
+
+		private static final long serialVersionUID = -5833660069297440308L;
+
+		private Field field;
+		private PropertyDescriptor propertyDescriptor;
+
+		public PropertyAndField() {
+		}
+
+		public PropertyAndField(Field field, PropertyDescriptor propertyDescriptor) {
+			this.field = field;
+			this.propertyDescriptor = propertyDescriptor;
+		}
+
+		public Field getField() {
+			return field;
+		}
+
+		public void setField(Field field) {
+			this.field = field;
+		}
+
+		public PropertyDescriptor getPropertyDescriptor() {
+			return propertyDescriptor;
+		}
+
+		public void setPropertyDescriptor(PropertyDescriptor propertyDescriptor) {
+			this.propertyDescriptor = propertyDescriptor;
+		}
+
 	}
 }

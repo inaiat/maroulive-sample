@@ -1,6 +1,6 @@
 package br.com.digilabs.wicket.crud;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,12 +9,11 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import br.com.digilabs.dao.SimpleDao;
+import br.com.digilabs.exception.IntegrationException;
 
 public class CrudList<T> extends Panel {
 
@@ -22,25 +21,62 @@ public class CrudList<T> extends Panel {
 	private SimpleDao simpleDao;
 
 	private static final long serialVersionUID = -2915941722094627572L;
-	
-	private Class<T> entity;
 
-	public CrudList(String id, final Class<T> entity) {
+	private Class<T> entityType;
+
+	public CrudList(String id, final Class<T> entityType) {
 		super(id);
-		
-		this.entity = entity;
-		
-		Map<String, Field> fields = CrudUtil.getFieldsFromPropertiesBean(entity);		
 
-		add(generateTableHeader(fields));
-		
-		List<IModel<?>> list = new ArrayList<IModel<?>>();
-		for (Field field : fields.values()) {
-			Model<String> model = new Model<String>(field.getName());
-			list.add(model);
-		}
-		
+		this.entityType = entityType;
 
+		Map<String, CrudUtil.PropertyAndField> propertiesAndFields = CrudUtil.getPropertiesAndFieldsFromBean(entityType);
+
+		add(generateTableHeader("headView", propertiesAndFields));
+
+		add(generateTableContent("tableContent", propertiesAndFields));
+
+	}
+
+	private ListView<CrudUtil.PropertyAndField> generateTableHeader(String id, Map<String, CrudUtil.PropertyAndField> fields) {
+		ListView<CrudUtil.PropertyAndField> headView = new ListView<CrudUtil.PropertyAndField>(id, new ArrayList<CrudUtil.PropertyAndField>(fields.values())) {
+
+			private static final long serialVersionUID = -5561784201214880067L;
+
+			@Override
+			protected void populateItem(ListItem<CrudUtil.PropertyAndField> listItem) {
+				listItem.add(new Label("name", listItem.getModelObject().getField().getName()));
+			}
+		};
+		return headView;
+	}
+
+	private ListView<CrudUtil.PropertyAndField> generateTableCols(String id, final T entity, Map<String, CrudUtil.PropertyAndField> propertiesAndFields) {
+
+		ListView<CrudUtil.PropertyAndField> headView = new ListView<CrudUtil.PropertyAndField>(id, new ArrayList<CrudUtil.PropertyAndField>(
+				propertiesAndFields.values())) {
+
+			private static final long serialVersionUID = -5561784201214880067L;
+
+			@Override
+			protected void populateItem(ListItem<CrudUtil.PropertyAndField> item) {
+				CrudUtil.PropertyAndField propertyAndField = item.getModelObject();
+				Object value;
+				try {
+					value = propertyAndField.getPropertyDescriptor().getReadMethod().invoke(entity);
+				} catch (IllegalAccessException e) {
+					throw new IntegrationException(e);
+				} catch (IllegalArgumentException e) {
+					throw new IntegrationException(e);
+				} catch (InvocationTargetException e) {
+					throw new IntegrationException(e);
+				}
+				item.add(new Label("value", String.valueOf(value)));
+			}
+		};
+		return headView;
+	}
+
+	private ListView<T> generateTableContent(String id, final Map<String, CrudUtil.PropertyAndField> propertiesAndFields) {
 
 		LoadableDetachableModel<List<T>> model = new LoadableDetachableModel<List<T>>() {
 
@@ -48,56 +84,23 @@ public class CrudList<T> extends Panel {
 
 			@Override
 			protected List<T> load() {
-				return simpleDao.getList(entity);
+				return simpleDao.getList(entityType);
 			}
 		};
 
-		ListView<T> listView = new ListView<T>("listView", model) {
-
-			private static final long serialVersionUID = -4624095310847431346L;
-
-			@Override
-			protected void populateItem(ListItem<T> arg0) {
-
-			}
-		};
-
-		add(listView);
-
-	}
-
-	private ListView<Field> generateTableHeader(Map<String, Field> fields) {
-		ListView<Field> headView = new ListView<Field>("headView", new ArrayList<Field>(fields.values()) ) {
+		ListView<T> line = new ListView<T>(id, model) {
 
 			private static final long serialVersionUID = -5561784201214880067L;
-
-			@Override
-			protected void populateItem(ListItem<Field> listItem) {
-				listItem.add(new Label("name", listItem.getModelObject().getName()));
-			}
-		};
-		return headView;
-	}	
-
-	
-	private ListView<T> generateTableContent(List<T> modelList) {
-		ListView<T> line = new ListView<T>("tableContent", simpleDao.getList(entity)) {
-
-			private static final long serialVersionUID = -5561784201214880067L;
-
 
 			@Override
 			protected void populateItem(ListItem<T> item) {
-				listItem.add(new Label("name", listItem.getModelObject()));
-				
+				item.add(generateTableCols("cols", item.getModelObject(), propertiesAndFields));
+
 			}
 		};
-		
+
 		return line;
 
 	}
-	
-	
-
 
 }

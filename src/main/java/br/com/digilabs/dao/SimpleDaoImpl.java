@@ -19,58 +19,65 @@ package br.com.digilabs.dao;
 import java.io.Serializable;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class SimpleDaoImpl extends HibernateDaoSupport implements SimpleDao {
+public class SimpleDaoImpl implements SimpleDao {
 
-    @Autowired
-    protected void setupSessionFactory(SessionFactory sessionFactory) {
-	setSessionFactory(sessionFactory);
-    }
+	protected SessionFactory sessionFactory;
 
-    public <T> T get(Class<T> entity, Serializable id) {
-	return getHibernateTemplate().get(entity, id);
-    }
+	@Autowired
+	protected void setupSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
-    public <T> T load(Class<T> entity, Serializable id) {
-	return getHibernateTemplate().load(entity, id);
-    }
+	protected Session getSession() {
+		return sessionFactory.getCurrentSession();
+	}
 
-    public void update(Object object) {
-	getHibernateTemplate().update(object);
-    }
+	@SuppressWarnings("unchecked")
+	public <T> T get(Class<T> entity, Serializable id) {
+		return (T) getSession().get(entity, id);
+	}
 
-    public Serializable save(Object object) {
-	return getHibernateTemplate().save(object);
-    }
+	@SuppressWarnings("unchecked")
+	public <T> T load(Class<T> entity, Serializable id) {
+		return  (T) getSession().load(entity, id);
+	}
 
-    public void saveOrUpdate(Object object) {
-	getHibernateTemplate().saveOrUpdate(object);
-    }
+	public void update(Object object) {
+		getSession().update(object);
+	}
 
-    public void delete(Object object) {
-	getHibernateTemplate().delete(object);
-    }
+	public Serializable save(Object object) {
+		return getSession().save(object);
+	}
 
-    @SuppressWarnings("unchecked")
-    public <T> T getUniqueResultByCriteria(Class<T> entity,
-	    DetachedCriteria criteria) {
-	return (T) criteria.getExecutableCriteria(getSession()).uniqueResult();
-    }
+	public void saveOrUpdate(Object object) {
+		getSession().saveOrUpdate(object);
+	}
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> getList(Class<T> entity) {
-	return getHibernateTemplate().find("from " + entity.getName() + " x");
-    }
+	public void delete(Object object) {
+		getSession().delete(object);
+	}
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> findByCriteria(DetachedCriteria criteria) {
-	return getHibernateTemplate().findByCriteria(criteria);
-    }
+	@SuppressWarnings("unchecked")
+	public <T> T getUniqueResultByCriteria(Class<T> entity, DetachedCriteria criteria) {
+		return (T) criteria.getExecutableCriteria(getSession()).uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getList(Class<T> entity) {
+		return (getSession().createQuery("from " + entity.getName() + " x").list());
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> List<T> findByCriteria(DetachedCriteria criteria) {
+		 return criteria.getExecutableCriteria(getSession()).list();
+	}
 
 }
