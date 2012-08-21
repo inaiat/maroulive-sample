@@ -88,7 +88,7 @@ public class CrudListPanel<T extends BasicEntity> extends Panel {
 						} else {
 							Map<String, PropertyDescriptor> map = CrudUtil.getPropertiesMapFromBean(crudActionEvent.getTargetEntityType());
 							try {
-								Object attrEntity = map.get(targetAttribute).getReadMethod().invoke(entity);
+								Object attrEntity = propertyAndField.getPropertyDescriptor().getReadMethod().invoke(entity);
 								Map<String,PropertyDescriptor> attrEntityMap = CrudUtil.getPropertiesMapFromBean(attrEntity.getClass());
 							 	value = attrEntityMap.get(targetAttribute).getReadMethod().invoke(attrEntity);								
 							} catch (Exception e) {
