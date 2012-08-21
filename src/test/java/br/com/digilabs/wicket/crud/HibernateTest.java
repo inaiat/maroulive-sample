@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import br.com.digilabs.dao.SimpleDao;
 import br.com.digilabs.domain.Address;
 import br.com.digilabs.domain.User;
 
@@ -17,7 +16,7 @@ import br.com.digilabs.domain.User;
 public class HibernateTest {
 
 	@Autowired
-	private SimpleDao simpleDao;
+	private CrudDao simpleDao;
 
 	@Test
 	public void addUser() {

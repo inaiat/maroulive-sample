@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  under the License.
  */
-package br.com.digilabs.dao;
+package br.com.digilabs.wicket.crud;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,7 +23,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public interface SimpleDao {
+public interface CrudDao {
 
     <T> T load(Class<T> entity, Serializable id);
 

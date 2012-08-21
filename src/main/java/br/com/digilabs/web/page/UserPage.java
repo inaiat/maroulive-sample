@@ -2,17 +2,17 @@ package br.com.digilabs.web.page;
 
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import br.com.digilabs.dao.SimpleDao;
 import br.com.digilabs.domain.Address;
 import br.com.digilabs.domain.User;
 import br.com.digilabs.wicket.crud.CrudActionEvent;
+import br.com.digilabs.wicket.crud.CrudDao;
 import br.com.digilabs.wicket.crud.CrudPage;
 
 public class UserPage extends CrudPage<User> {
 
 	private static final long serialVersionUID = 7196379432800820361L;
 	@SpringBean
-	private SimpleDao simpleDao;
+	private CrudDao simpleDao;
 	
 	public UserPage() {
 		

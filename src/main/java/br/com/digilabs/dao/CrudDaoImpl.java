@@ -25,8 +25,10 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.digilabs.wicket.crud.CrudDao;
+
 @Repository
-public class SimpleDaoImpl implements SimpleDao {
+public class CrudDaoImpl implements CrudDao {
 
 	protected SessionFactory sessionFactory;
 
