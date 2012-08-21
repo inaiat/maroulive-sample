@@ -77,7 +77,8 @@ public class CrudUtil {
 		}
 
 		return Collections.unmodifiableMap(propertyDescriptorMap);
-	}
+	}	
+
 
 	public static class PropertyAndField implements Serializable {
 

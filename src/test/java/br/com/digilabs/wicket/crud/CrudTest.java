@@ -1,6 +1,7 @@
 package br.com.digilabs.wicket.crud;
 
 import java.beans.IntrospectionException;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,6 +26,19 @@ public class CrudTest {
 		// fail("Not yet implemented");
 	}
 
-	
+	@Test
+	public void test2() throws InterruptedException {
+
+		String s = new String("test");
+		WeakReference r = new WeakReference(s);
+		WeakReference sr = new WeakReference("aaa");
+		System.out.println("before gc: r=" + r.get() + ", static=" + sr.get());
+		System.gc();
+		Thread.sleep(100);
+
+		// only r.get() becomes null
+		System.out.println("after gc: r=" + r.get() + ", static=" + sr.get());
+
+	}
 
 }

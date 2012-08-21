@@ -3,7 +3,9 @@ package br.com.digilabs.web.page;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import br.com.digilabs.dao.SimpleDao;
+import br.com.digilabs.domain.Address;
 import br.com.digilabs.domain.User;
+import br.com.digilabs.wicket.crud.CrudActionEvent;
 import br.com.digilabs.wicket.crud.CrudPage;
 
 public class UserPage extends CrudPage<User> {
@@ -13,6 +15,8 @@ public class UserPage extends CrudPage<User> {
 	private SimpleDao simpleDao;
 	
 	public UserPage() {
+		
+		getCrudActionListener().add(new CrudActionEvent(Address.class, AddressPage.class,"city","address"));
 		
 //		Address address = new Address();
 //		address.setAddress("Rio Branco");

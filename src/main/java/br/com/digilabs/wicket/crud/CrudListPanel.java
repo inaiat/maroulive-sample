@@ -1,21 +1,30 @@
 package br.com.digilabs.wicket.crud;
 
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import br.com.digilabs.dao.SimpleDao;
+import br.com.digilabs.domain.BasicEntity;
 import br.com.digilabs.exception.IntegrationException;
 
-public class CrudListPanel<T> extends Panel {
+public class CrudListPanel<T extends BasicEntity> extends Panel {
 
 	@SpringBean
 	private SimpleDao simpleDao;
@@ -23,6 +32,8 @@ public class CrudListPanel<T> extends Panel {
 	private static final long serialVersionUID = -2915941722094627572L;
 
 	private Class<T> entityType;
+
+	private final CrudActionListenerCollection crudActionListener = new CrudActionListenerCollection();
 
 	public CrudListPanel(String id, final Class<T> entityType) {
 		super(id);
@@ -58,14 +69,51 @@ public class CrudListPanel<T> extends Panel {
 				Object value;
 				try {
 					value = propertyAndField.getPropertyDescriptor().getReadMethod().invoke(entity);
-				} catch (IllegalAccessException e) {
-					throw new IntegrationException(e);
-				} catch (IllegalArgumentException e) {
-					throw new IntegrationException(e);
-				} catch (InvocationTargetException e) {
+				} catch (Exception e) {
 					throw new IntegrationException(e);
 				}
-				item.add(new Label("value", String.valueOf(value)));
+
+				WebMarkupContainer link = null;
+				String targetAttribute = null;
+				CrudActionEvent crudActionEvent;
+				for (Iterator<CrudActionEvent> iterator = getCrudActionListener().iterator(); iterator.hasNext();) {
+					crudActionEvent = iterator.next();
+					if (crudActionEvent.getTargetEntityType().isAssignableFrom(value.getClass())) {
+						PageParameters pageParameters = new PageParameters();
+						pageParameters.add("id", entity.getId());
+						targetAttribute = crudActionEvent.getTargetAttribute();
+						link = new BookmarkablePageLink<Void>("link", crudActionEvent.getTargetPage(), pageParameters);
+						if (targetAttribute == null) {
+							value = new String("TESTE");
+						} else {
+							Map<String, PropertyDescriptor> map = CrudUtil.getPropertiesMapFromBean(crudActionEvent.getTargetEntityType());
+							try {
+								Object attrEntity = map.get(targetAttribute).getReadMethod().invoke(entity);
+								Map<String,PropertyDescriptor> attrEntityMap = CrudUtil.getPropertiesMapFromBean(attrEntity.getClass());
+							 	value = attrEntityMap.get(targetAttribute).getReadMethod().invoke(attrEntity);								
+							} catch (Exception e) {
+								throw new IntegrationException(e);
+							} 
+
+						}						
+					}
+				}
+
+				Label label = new Label("value", String.valueOf(value));
+
+				if (link == null) {
+					link = new WebMarkupContainer("link");
+					link.setVisibilityAllowed(false);
+					link.add(new Label("linkValue", ""));
+				} else {
+					label.setVisibilityAllowed(false);
+					Map<String, PropertyDescriptor> map = CrudUtil.getPropertiesMapFromBean(entity.getClass());
+					link.add(new Label("linkValue", String.valueOf(value)));
+				}
+
+				item.add(label);
+				item.add(link);
+
 			}
 		};
 		return headView;
@@ -96,6 +144,10 @@ public class CrudListPanel<T> extends Panel {
 
 		return line;
 
+	}
+
+	public CrudActionListenerCollection getCrudActionListener() {
+		return crudActionListener;
 	}
 
 }
