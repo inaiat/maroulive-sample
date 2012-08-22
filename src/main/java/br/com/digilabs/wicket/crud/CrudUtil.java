@@ -77,8 +77,53 @@ public class CrudUtil {
 		}
 
 		return Collections.unmodifiableMap(propertyDescriptorMap);
-	}	
+	}
 
+	/**
+	 * Return {@link PropertyDescriptor} of entity specified on property param
+	 * or return {@code null} if this property doesn't exist in the entity.
+	 * 
+	 * @param entity
+	 * @param property
+	 * @return
+	 */
+	public static PropertyDescriptor getPropertyFromBean(Class<?> entity, String property) {
+		BeanInfo beanInfo;
+		try {
+			beanInfo = Introspector.getBeanInfo(entity);
+		} catch (IntrospectionException e) {
+			throw new IntegrationException(e);
+		}
+		PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+		PropertyDescriptor propertyDescriptorToReturn = null;
+		for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+			if (property.equals(propertyDescriptor.getName())) {
+				propertyDescriptorToReturn = propertyDescriptor;
+				break;
+			}
+		}
+		return propertyDescriptorToReturn;
+	}
+
+	public static Object invokeReadMethod(Class<?> entity, Object object, String property) {
+		try {
+			PropertyDescriptor propertyDescriptor = getPropertyFromBean(entity, property);
+			if (propertyDescriptor==null) {
+				throw new IntegrationException("Property " + property + " not found in " + entity.getSimpleName());
+			}
+			return propertyDescriptor.getReadMethod().invoke(object);
+		} catch (Exception e) {
+			throw new IntegrationException(e);
+		}
+	}
+
+	public static Object invokeReadMethod(PropertyDescriptor propertyDescriptor, Object object) {
+		try {
+			return propertyDescriptor.getReadMethod().invoke(object);
+		} catch (Exception e) {
+			throw new IntegrationException(e);
+		}
+	}
 
 	public static class PropertyAndField implements Serializable {
 

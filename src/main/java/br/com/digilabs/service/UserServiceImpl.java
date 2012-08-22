@@ -23,15 +23,15 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.digilabs.dao.SimpleDao;
 import br.com.digilabs.domain.User;
+import br.com.digilabs.wicket.crud.CrudDao;
 
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private SimpleDao simpleDao;
+    private CrudDao simpleDao;
 
     public List<User> listUser(User user) {
         DetachedCriteria detachedCriteria = DetachedCriteria.forClass(User.class);
