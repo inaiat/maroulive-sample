@@ -25,23 +25,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface CrudDao {
 
-    <T> T load(Class<T> entity, Serializable id);
+	<T> T load(Class<T> entity, Serializable id);
 
-    <T> T get(Class<T> entity, Serializable id);
+	<T> T get(Class<T> entity, Serializable id);
 
-    void update(Object object);
- 
-    Serializable save(Object object);
+	void update(Object object);
 
-    void saveOrUpdate(Object object);
+	Serializable save(Object object);
 
-    void delete(Object object);
+	void saveOrUpdate(Object object);
 
-    <T> List<T> getList(Class<T> entity);
+	void delete(Object object);
 
-    <T> List<T> findByCriteria(DetachedCriteria criteria);
-    
-    <T> T getUniqueResultByCriteria(Class<T> entity, DetachedCriteria criteria);  
+	<T> List<T> getList(Class<T> entity);
 
+	<T> List<T> findByCriteria(DetachedCriteria criteria);
+
+	<T> T getUniqueResultByCriteria(Class<T> entity, DetachedCriteria criteria);
 
 }

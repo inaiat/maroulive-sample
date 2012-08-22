@@ -6,7 +6,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -79,10 +78,11 @@ public class CrudUtil {
 
 		return Collections.unmodifiableMap(propertyDescriptorMap);
 	}
-	
+
 	/**
-	 * Return {@link PropertyDescriptor} of entity specified on property param 
+	 * Return {@link PropertyDescriptor} of entity specified on property param
 	 * or return {@code null} if this property doesn't exist in the entity.
+	 * 
 	 * @param entity
 	 * @param property
 	 * @return
@@ -97,31 +97,33 @@ public class CrudUtil {
 		PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
 		PropertyDescriptor propertyDescriptorToReturn = null;
 		for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-		    	if (property.equals(propertyDescriptor.getName())) {
-		    	    propertyDescriptorToReturn = propertyDescriptor;
-		    	    break;
-		    	}
+			if (property.equals(propertyDescriptor.getName())) {
+				propertyDescriptorToReturn = propertyDescriptor;
+				break;
+			}
 		}
 		return propertyDescriptorToReturn;
-	}	
-	
+	}
+
 	public static Object invokeReadMethod(Class<?> entity, Object object, String property) {
-	    try {
-		return getPropertyFromBean(entity, property).getReadMethod().invoke(object);
-	    } catch (Exception e) {
-		throw new IntegrationException(e);
-	    }
+		try {
+			PropertyDescriptor propertyDescriptor = getPropertyFromBean(entity, property);
+			if (propertyDescriptor==null) {
+				throw new IntegrationException("Property " + property + " not found in " + entity.getSimpleName());
+			}
+			return propertyDescriptor.getReadMethod().invoke(object);
+		} catch (Exception e) {
+			throw new IntegrationException(e);
+		}
 	}
-	
+
 	public static Object invokeReadMethod(PropertyDescriptor propertyDescriptor, Object object) {
-	    try {
-		return propertyDescriptor.getReadMethod().invoke(object);
-	    } catch (Exception e) {
-		throw new IntegrationException(e);
-	    }
+		try {
+			return propertyDescriptor.getReadMethod().invoke(object);
+		} catch (Exception e) {
+			throw new IntegrationException(e);
+		}
 	}
-
-
 
 	public static class PropertyAndField implements Serializable {
 

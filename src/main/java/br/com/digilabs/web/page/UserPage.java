@@ -39,4 +39,9 @@ public class UserPage extends CrudPage<User> {
 		return User.class;
 	}
 
+	@Override
+	public CrudDao getDao() {
+		return simpleDao;
+	}
+
 }
