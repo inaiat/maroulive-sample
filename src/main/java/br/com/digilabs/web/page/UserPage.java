@@ -11,6 +11,7 @@ import br.com.digilabs.wicket.crud.CrudPage;
 public class UserPage extends CrudPage<User> {
 
 	private static final long serialVersionUID = 7196379432800820361L;
+	
 	@SpringBean
 	private CrudDao simpleDao;
 	

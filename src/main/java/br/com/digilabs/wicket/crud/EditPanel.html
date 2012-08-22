@@ -5,13 +5,29 @@
 <title>Insert title here</title>
 </head>
 <body>
-<wicket:panel>
-    <form>
-        <wicket:container wicket:id="items">
-        	<label wicket:id="label"></label>
-        	<!-- <wicket:container wicket:id="formComponent"></wicket:container> -->
-        </wicket:container>
-    </form>
-</wicket:panel>
+	<wicket:panel>
+		<form>
+
+			<div class="modal-header">
+				<button data-dismiss="modal" class="close" type="button">x</button>
+				<h3>Modal header</h3>
+			</div>
+			<form wicket:id="form">
+				<div class="modal-body">
+					<wicket:container wicket:id="items">
+						<label wicket:id="label"></label>
+						<wicket:container wicket:id="formComponent"></wicket:container>
+					</wicket:container>
+				</div>
+				<div class="modal-footer">
+					<a href="#">Close</a> <button wicket:id="ajax-button" class="btn btn-primary">Send</button>
+				</div>
+			</form>
+
+
+		</form>
+	</wicket:panel>
 </body>
 </html>
+
+

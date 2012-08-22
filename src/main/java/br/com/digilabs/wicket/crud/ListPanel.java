@@ -1,9 +1,8 @@
 package br.com.digilabs.wicket.crud;
 
-import java.util.ArrayList;
+import java.beans.PropertyDescriptor;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -22,38 +21,35 @@ public class ListPanel<T extends BasicEntity> extends BasicCrudPanel<T> {
 	private final CrudActionListenerCollection crudActionListener = new CrudActionListenerCollection();
 
 	public ListPanel(String id, final Class<T> entityType, CrudDao dao) {
-		super(id,entityType,dao);
-		Map<String, CrudUtil.PropertyAndField> propertiesAndFields = CrudUtil.getPropertiesAndFieldsFromBean(entityType);
-		add(generateTableHeader("headView", propertiesAndFields));
-		add(generateTableContent("tableContent", propertiesAndFields));
+		super(id, entityType, dao);
+		List<String> fields = CrudUtil.getPropertiesNameFromBean(entityType);
+		add(generateTableHeader("headView", fields));
+		add(generateTableContent("tableContent", fields));
 	}
 
-	private ListView<CrudUtil.PropertyAndField> generateTableHeader(String id, Map<String, CrudUtil.PropertyAndField> fields) {
-		ListView<CrudUtil.PropertyAndField> headView = new ListView<CrudUtil.PropertyAndField>(id,
-				new ArrayList<CrudUtil.PropertyAndField>(fields.values())) {
+	private ListView<String> generateTableHeader(String id, List<String> fields) {
+		ListView<String> headView = new ListView<String>(id, fields) {
 
 			private static final long serialVersionUID = -5561784201214880067L;
 
 			@Override
-			protected void populateItem(ListItem<CrudUtil.PropertyAndField> listItem) {
-				listItem.add(new Label("name", listItem.getModelObject().getField().getName()));
+			protected void populateItem(ListItem<String> listItem) {				
+				listItem.add(new Label("name", listItem.getModelObject()));
 			}
 		};
 		return headView;
 	}
 
-	private ListView<CrudUtil.PropertyAndField> generateTableCols(String id, final T entity,
-			Map<String, CrudUtil.PropertyAndField> propertiesAndFields) {
+	private ListView<String> generateTableCols(String id, final T entity, List<String> fields) {
 
-		ListView<CrudUtil.PropertyAndField> headView = new ListView<CrudUtil.PropertyAndField>(id,
-				new ArrayList<CrudUtil.PropertyAndField>(propertiesAndFields.values())) {
+		ListView<String> headView = new ListView<String>(id, fields) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void populateItem(ListItem<CrudUtil.PropertyAndField> item) {
-				CrudUtil.PropertyAndField propertyAndField = item.getModelObject();
-				Object columnValue = CrudUtil.invokeReadMethod(propertyAndField.getPropertyDescriptor(), entity);
+			protected void populateItem(ListItem<String> item) {				
+				PropertyDescriptor propertyDescriptor = CrudUtil.getPropertyFromBean(getEntityType(), item.getModelObject());
+				Object columnValue = CrudUtil.invokeReadMethod(propertyDescriptor, entity);
 				Object linkValue = null;
 
 				WebMarkupContainer link = null;
@@ -91,7 +87,7 @@ public class ListPanel<T extends BasicEntity> extends BasicCrudPanel<T> {
 		return headView;
 	}
 
-	private ListView<T> generateTableContent(String id, final Map<String, CrudUtil.PropertyAndField> propertiesAndFields) {
+	private ListView<T> generateTableContent(String id, final List<String> fields) {
 
 		LoadableDetachableModel<List<T>> listModel = new LoadableDetachableModel<List<T>>() {
 
@@ -109,7 +105,7 @@ public class ListPanel<T extends BasicEntity> extends BasicCrudPanel<T> {
 
 			@Override
 			protected void populateItem(ListItem<T> item) {
-				item.add(generateTableCols("cols", item.getModelObject(), propertiesAndFields));
+				item.add(generateTableCols("cols", item.getModelObject(), fields));
 
 			}
 		};

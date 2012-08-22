@@ -6,6 +6,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +16,19 @@ import java.util.Map;
 import br.com.digilabs.exception.IntegrationException;
 
 public class CrudUtil {
+
+	public static List<String> getPropertiesNameFromBean(Class<?> entity) {
+		List<PropertyDescriptor> descriptors = getPropertiesFromBean(entity);
+		Map<String, Field> fields = getDeclaredFieldsHierarchy(entity);
+		List<String> list = new ArrayList<String>();
+		for (PropertyDescriptor propertyDescriptor : descriptors) {
+			String name = propertyDescriptor.getName();
+			if (fields.containsKey(name)) {
+				list.add(name);
+			}
+		}
+		return Collections.unmodifiableList(list);
+	}
 
 	public static Map<String, PropertyAndField> getPropertiesAndFieldsFromBean(Class<?> entity) {
 		List<PropertyDescriptor> descriptors = getPropertiesFromBean(entity);
@@ -108,7 +122,7 @@ public class CrudUtil {
 	public static Object invokeReadMethod(Class<?> entity, Object object, String property) {
 		try {
 			PropertyDescriptor propertyDescriptor = getPropertyFromBean(entity, property);
-			if (propertyDescriptor==null) {
+			if (propertyDescriptor == null) {
 				throw new IntegrationException("Property " + property + " not found in " + entity.getSimpleName());
 			}
 			return propertyDescriptor.getReadMethod().invoke(object);
