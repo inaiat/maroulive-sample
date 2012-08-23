@@ -14,11 +14,9 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import br.com.digilabs.domain.BasicEntity;
 
-public class ListPanel<T extends BasicEntity> extends BasicCrudPanel<T> {
+public abstract class ListPanel<T extends BasicEntity> extends BasicCrudPanel<T> {
 
 	private static final long serialVersionUID = -2915941722094627572L;
-
-	private final CrudActionListenerCollection crudActionListener = new CrudActionListenerCollection();
 
 	public ListPanel(String id, final Class<T> entityType, CrudDao dao) {
 		super(id, entityType, dao);
@@ -114,8 +112,6 @@ public class ListPanel<T extends BasicEntity> extends BasicCrudPanel<T> {
 
 	}
 
-	public CrudActionListenerCollection getCrudActionListener() {
-		return crudActionListener;
-	}
+	public abstract CrudActionListenerCollection getCrudActionListener();	
 
 }
