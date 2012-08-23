@@ -6,26 +6,22 @@
 </head>
 <body>
 	<wicket:panel>
-		<form>
-
-			<div class="modal-header">
-				<button data-dismiss="modal" class="close" type="button">x</button>
-				<h3>Modal header</h3>
-			</div>
+		<div class="modal-header">
+			<button data-dismiss="modal" class="close" type="button">x</button>
+			<h3>Modal header</h3>
+		</div>
+		<div class="modal-body">
 			<form wicket:id="form">
-				<div class="modal-body">
-					<wicket:container wicket:id="items">
-						<label wicket:id="label"></label>
-						<wicket:container wicket:id="formComponent"></wicket:container>
-					</wicket:container>
-				</div>
-				<div class="modal-footer">
-					<a href="#">Close</a> <button wicket:id="ajax-button" class="btn btn-primary">Send</button>
-				</div>
+				<wicket:container wicket:id="items">
+					<label wicket:id="label"></label>
+					<wicket:container wicket:id="formComponent"></wicket:container>
+				</wicket:container>
 			</form>
-
-
-		</form>
+		</div>
+		<div class="modal-footer">
+			<a href="#">Close</a>
+			<button wicket:id="ajax-button" class="btn btn-primary">Send</button>
+		</div>
 	</wicket:panel>
 </body>
 </html>

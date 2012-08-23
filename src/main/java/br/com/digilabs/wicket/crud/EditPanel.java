@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -52,8 +51,10 @@ public class EditPanel<T extends BasicEntity> extends BasicCrudModalPanel<T> {
 		List<String> fields= CrudUtil.getPropertiesNameFromBean(entityType);
 		
 		Form<T> form = new Form<T>("form", entityModel);
+		form.setOutputMarkupPlaceholderTag(true);		
 		form.add(generateItems("items", fields));
-		form.add(new AjaxButton("ajax-button",form) {		
+		
+		add(new AjaxButton("ajax-button",form) {		
 			private static final long serialVersionUID = 1L;
 			
 			@Override
