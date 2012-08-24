@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -137,6 +138,28 @@ public class CrudUtil {
 		} catch (Exception e) {
 			throw new IntegrationException(e);
 		}
+	}
+
+	/**
+	 * Return a {@link CrudActionEvent} specified in classType or or return
+	 * {@code null} if this classType doesn't exist in the
+	 * {@link CrudActionListenerCollection}
+	 * 
+	 * @param crudActionListener
+	 * @param classType
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static CrudActionEvent<?> findListener(CrudActionListenerCollection crudActionListener, Class<?> classType) {
+		CrudActionEvent<?> crudActionEventToReturn = null;
+		for (Iterator<CrudActionEvent<?>> iterator = crudActionListener.iterator(); iterator.hasNext();) {
+			@SuppressWarnings("rawtypes")
+			CrudActionEvent crudActionEvent = iterator.next();
+			if (crudActionEvent.getTargetEntityType().isAssignableFrom(classType)) {
+				crudActionEventToReturn = crudActionEvent;
+			}
+		}
+		return crudActionEventToReturn;
 	}
 
 	public static class PropertyAndField implements Serializable {

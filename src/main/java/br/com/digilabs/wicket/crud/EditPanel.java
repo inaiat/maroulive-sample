@@ -32,12 +32,16 @@ public class EditPanel<T extends BasicEntity> extends BasicCrudModalPanel<T> {
 
 	private boolean createOperation = false;
 
-	public EditPanel(String id, final Class<T> entityType, CrudDao dao) {
-		this(id, entityType, null, dao);
+	private final CrudActionListenerCollection crudActionListener;
+
+	public EditPanel(String id, final Class<T> entityType, CrudDao dao, final CrudActionListenerCollection crudActionListener) {
+		this(id, entityType, null, dao, crudActionListener);
 	}
 
-	public EditPanel(String id, final Class<T> entityType, IModel<T> model, CrudDao dao) {
+	public EditPanel(String id, final Class<T> entityType, IModel<T> model, CrudDao dao, final CrudActionListenerCollection crudActionListener) {
 		super(id, entityType, dao);
+
+		this.crudActionListener = crudActionListener;
 
 		if (model == null) {
 			createOperation = true;
@@ -85,7 +89,7 @@ public class EditPanel<T extends BasicEntity> extends BasicCrudModalPanel<T> {
 				Class<?> propertyType = propertyDescriptor.getPropertyType();
 				if (createOperation && BasicEntity.class.isAssignableFrom(propertyType)) {
 					List<?> list = getDao().getList(propertyType);
-					formComponent = new CrudComboBoxField("formComponent", propertyModel, list);
+					formComponent = new CrudComboBoxField("formComponent", propertyModel, list,propertyType);
 				} else if (propertyDescriptor.getPropertyType().isAssignableFrom(Date.class)) {
 					formComponent = new CrudDateTextField("formComponent", propertyModel);
 				} else {
@@ -128,20 +132,26 @@ public class EditPanel<T extends BasicEntity> extends BasicCrudModalPanel<T> {
 	private class CrudComboBoxField extends Panel {
 		private static final long serialVersionUID = 1L;
 
-		public CrudComboBoxField(String id, IModel<?> model, List<?> choices) {
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public CrudComboBoxField(String id, IModel<?> model, List<?> choices, Class<?> classType) {
 			super(id);
-			@SuppressWarnings({ "rawtypes", "unchecked" })
 			DropDownChoice dropDownChoice = new DropDownChoice("field", model, choices);
-			dropDownChoice.setChoiceRenderer(new IChoiceRenderer() {
+			
+			final CrudActionEvent<?> actionEvent = CrudUtil.findListener(crudActionListener, classType);
+			if (actionEvent != null) {
+				dropDownChoice.setChoiceRenderer(new IChoiceRenderer() {
+					private static final long serialVersionUID = 1L;
 
-				public Object getDisplayValue(Object object) {
-					return null;
-				}
+					public Object getDisplayValue(Object object) {
+						return CrudUtil.invokeReadMethod(object.getClass(), object, actionEvent.getTargetAttribute());
+					}
 
-				public String getIdValue(Object object, int index) {
-					return null;
-				}
-			});
+					public String getIdValue(Object object, int index) {
+						BasicEntity basicEntity = (BasicEntity) object;
+						return String.valueOf(basicEntity.getId());
+					}
+				});
+			}
 			add(dropDownChoice);
 		}
 	}

@@ -1,7 +1,6 @@
 package br.com.digilabs.wicket.crud;
 
 import java.beans.PropertyDescriptor;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -14,12 +13,15 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import br.com.digilabs.domain.BasicEntity;
 
-public abstract class ListPanel<T extends BasicEntity> extends BasicCrudPanel<T> {
+public class ListPanel<T extends BasicEntity> extends BasicCrudPanel<T> {
 
 	private static final long serialVersionUID = -2915941722094627572L;
 
-	public ListPanel(String id, final Class<T> entityType, CrudDao dao) {
+	private final CrudActionListenerCollection crudActionListener;
+
+	public ListPanel(String id, final Class<T> entityType, CrudDao dao, final CrudActionListenerCollection crudActionListener) {
 		super(id, entityType, dao);
+		this.crudActionListener = crudActionListener;
 		List<String> fields = CrudUtil.getPropertiesNameFromBean(entityType);
 		add(generateTableHeader("headView", fields));
 		add(generateTableContent("tableContent", fields));
@@ -31,7 +33,7 @@ public abstract class ListPanel<T extends BasicEntity> extends BasicCrudPanel<T>
 			private static final long serialVersionUID = -5561784201214880067L;
 
 			@Override
-			protected void populateItem(ListItem<String> listItem) {				
+			protected void populateItem(ListItem<String> listItem) {
 				listItem.add(new Label("name", listItem.getModelObject()));
 			}
 		};
@@ -45,26 +47,25 @@ public abstract class ListPanel<T extends BasicEntity> extends BasicCrudPanel<T>
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void populateItem(ListItem<String> item) {				
+			protected void populateItem(ListItem<String> item) {
 				PropertyDescriptor propertyDescriptor = CrudUtil.getPropertyFromBean(getEntityType(), item.getModelObject());
 				Object columnValue = CrudUtil.invokeReadMethod(propertyDescriptor, entity);
 				Object linkValue = null;
 
 				WebMarkupContainer link = null;
-				for (Iterator<CrudActionEvent> iterator = getCrudActionListener().iterator(); iterator.hasNext();) {
-					CrudActionEvent crudActionEvent = iterator.next();
-					if (crudActionEvent.getTargetEntityType().isAssignableFrom(columnValue.getClass())) {
-						PageParameters pageParameters = new PageParameters();
-						pageParameters.add("id", entity.getId());
-						String targetAttribute = crudActionEvent.getTargetAttribute();
-						link = new BookmarkablePageLink<Void>("link", crudActionEvent.getTargetPage(), pageParameters);
-						if (targetAttribute == null) {
-							linkValue = columnValue.getClass().getSimpleName();
-						} else {
-							linkValue = CrudUtil.invokeReadMethod(columnValue.getClass(), columnValue, targetAttribute);
-						}
+
+				CrudActionEvent<?> crudActionEvent = CrudUtil.findListener(crudActionListener, columnValue.getClass());
+				if (crudActionEvent != null) {
+					PageParameters pageParameters = new PageParameters();
+					pageParameters.add("id", entity.getId());
+					String targetAttribute = crudActionEvent.getTargetAttribute();
+					link = new BookmarkablePageLink<Void>("link", crudActionEvent.getTargetPage(), pageParameters);
+					if (targetAttribute == null) {
+						linkValue = columnValue.getClass().getSimpleName();
+					} else {
+						linkValue = CrudUtil.invokeReadMethod(columnValue.getClass(), columnValue, targetAttribute);
 					}
-				}
+				}				
 
 				Label label = new Label("value", String.valueOf(columnValue));
 
@@ -111,7 +112,5 @@ public abstract class ListPanel<T extends BasicEntity> extends BasicCrudPanel<T>
 		return line;
 
 	}
-
-	public abstract CrudActionListenerCollection getCrudActionListener();	
 
 }

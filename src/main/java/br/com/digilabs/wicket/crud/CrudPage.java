@@ -23,18 +23,12 @@ public abstract class CrudPage<T extends BasicEntity> extends BasePage {
 	}
 
 	public CrudPage(PageParameters pageParameters) {
-		add(crudListPanel = new ListPanel<T>("crudList", getDomainClass(), getDao()) {
-
-			private static final long serialVersionUID = 2396656607254609652L;
-
-			@Override
-			public CrudActionListenerCollection getCrudActionListener() {
-				return crudActionListener;
-			}
-			
-		} );
 		
-		EditPanel<T> editPanel = new EditPanel<T>("editPanel", getDomainClass() ,crudDao);
+		this.crudListPanel = new ListPanel<T>("crudList", getDomainClass(), getDao(),crudActionListener);
+				
+		add(crudListPanel);
+		
+		EditPanel<T> editPanel = new EditPanel<T>("editPanel", getDomainClass() ,crudDao,crudActionListener);
 		BootstrapModalLink modalLink = new BootstrapModalLink("create",editPanel);
 		
 		add(editPanel);
@@ -48,7 +42,7 @@ public abstract class CrudPage<T extends BasicEntity> extends BasePage {
 	public abstract Class<T> getDomainClass();
 	
 	public abstract CrudDao getDao();
-
+	
 	public CrudActionListenerCollection getCrudActionListener() {
 		return crudActionListener;
 	}

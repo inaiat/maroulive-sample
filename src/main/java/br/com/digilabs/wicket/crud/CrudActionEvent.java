@@ -2,24 +2,26 @@ package br.com.digilabs.wicket.crud;
 
 import java.io.Serializable;
 
-public class CrudActionEvent implements Serializable {
+import br.com.digilabs.domain.BasicEntity;
+
+public class CrudActionEvent<T extends BasicEntity> implements Serializable {
 
 	private static final long serialVersionUID = -6480895021658997926L;
 	
 	private final Class<? extends CrudPage<?>> targetPage;
 	
-	private final Class<?> targetEntityType;
+	private final Class<T> targetEntityType;
 	
 	private final String targetAttribute;
 	
 	private final String defaultColumnValue;	
 
 	
-	public CrudActionEvent(Class<?> targetEntityType, Class<? extends CrudPage<?>> targetPage) {
+	public CrudActionEvent(Class<T> targetEntityType, Class<? extends CrudPage<T>> targetPage) {
 		this(targetEntityType, targetPage, null, null);
 	}
 	
-	public CrudActionEvent(Class<?> targetEntityType, Class<? extends CrudPage<?>> targetPage, String targetAttribute, String defaultColumnValue) {
+	public CrudActionEvent(Class<T> targetEntityType, Class<? extends CrudPage<T>> targetPage, String targetAttribute, String defaultColumnValue) {
 		this.targetEntityType = targetEntityType;
 		this.targetPage = targetPage;
 		this.defaultColumnValue = defaultColumnValue;
@@ -27,12 +29,7 @@ public class CrudActionEvent implements Serializable {
 	}
 
 
-	public Class<? extends CrudPage<?>> getTargetPage() {
-		return targetPage;
-	}
-
-
-	public Class<?> getTargetEntityType() {
+	public Class<T> getTargetEntityType() {
 		return targetEntityType;
 	}
 
@@ -44,6 +41,10 @@ public class CrudActionEvent implements Serializable {
 
 	public String getDefaultColumnValue() {
 		return defaultColumnValue;
+	}
+
+	public Class<? extends CrudPage<?>> getTargetPage() {
+		return targetPage;
 	}
 	
 	
