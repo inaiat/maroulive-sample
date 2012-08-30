@@ -17,7 +17,7 @@ public class UserPage extends CrudPage<User> {
 	
 	public UserPage() {
 		
-		getCrudActionListener().add(new CrudActionEvent(Address.class, AddressPage.class,"city","address"));
+		getCrudActionListener().add(new CrudActionEvent<Address>(Address.class, AddressPage.class,"city","address"));
 		
 //		Address address = new Address();
 //		address.setAddress("Rio Branco");

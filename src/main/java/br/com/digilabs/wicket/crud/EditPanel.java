@@ -135,8 +135,7 @@ public class EditPanel<T extends BasicEntity> extends BasicCrudModalPanel<T> {
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public CrudComboBoxField(String id, IModel<?> model, List<?> choices, Class<?> classType) {
 			super(id);
-			DropDownChoice dropDownChoice = new DropDownChoice("field", model, choices);
-			
+			DropDownChoice dropDownChoice = new DropDownChoice("field", model, choices);			
 			final CrudActionEvent<?> actionEvent = CrudUtil.findListener(crudActionListener, classType);
 			if (actionEvent != null) {
 				dropDownChoice.setChoiceRenderer(new IChoiceRenderer() {
