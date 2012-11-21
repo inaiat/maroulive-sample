@@ -34,11 +34,6 @@ public class EditPanel<T extends BasicEntity> extends BasicCrudModalPanel<T> {
 
 	private final CrudActionListenerCollection crudActionListener;
 
-	private static <T> T createInstance(Class<T> clazz) throws InstantiationException, IllegalAccessException {
-		T t = (T) clazz.newInstance();
-		return t;
-	}
-
 	public EditPanel(String id, final Class<T> entityType, final CrudActionListenerCollection crudActionListener) {
 		this(id, entityType, null, crudActionListener);
 	}
@@ -51,7 +46,7 @@ public class EditPanel<T extends BasicEntity> extends BasicCrudModalPanel<T> {
 		if (entityObject == null) {
 			createOperation = true;
 			try {
-				this.entityModel = createInstance(entityType);
+				this.entityModel = CrudUtil.createInstanceFromCass(entityType);
 			} catch (Exception e) {
 				throw new IntegrationException(e);
 			}
@@ -72,7 +67,7 @@ public class EditPanel<T extends BasicEntity> extends BasicCrudModalPanel<T> {
 			protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 				@SuppressWarnings("unchecked")
 				T object = (T) form.getModelObject();
-				getDao().saveOrUpdate(object);
+				getDao().save(object);
 			}
 		});
 

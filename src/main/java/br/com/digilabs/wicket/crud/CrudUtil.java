@@ -17,6 +17,11 @@ import java.util.Map;
 import br.com.digilabs.exception.IntegrationException;
 
 public class CrudUtil {
+	
+	public static <T> T createInstanceFromCass(Class<T> clazz) throws InstantiationException, IllegalAccessException {
+		T t = (T) clazz.newInstance();
+		return t;
+	}
 
 	public static List<String> getPropertiesNameFromBean(Class<?> entity) {
 		List<PropertyDescriptor> descriptors = getPropertiesFromBean(entity);
