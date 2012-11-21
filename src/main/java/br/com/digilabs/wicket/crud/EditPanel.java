@@ -28,35 +28,40 @@ public class EditPanel<T extends BasicEntity> extends BasicCrudModalPanel<T> {
 
 	private static final long serialVersionUID = -8549165424203389781L;
 
-	private final IModel<T> entityModel;
+	private final T entityModel;
 
 	private boolean createOperation = false;
 
 	private final CrudActionListenerCollection crudActionListener;
 
-	public EditPanel(String id, final Class<T> entityType, CrudDao dao, final CrudActionListenerCollection crudActionListener) {
-		this(id, entityType, null, dao, crudActionListener);
+	private static <T> T createInstance(Class<T> clazz) throws InstantiationException, IllegalAccessException {
+		T t = (T) clazz.newInstance();
+		return t;
 	}
 
-	public EditPanel(String id, final Class<T> entityType, IModel<T> model, CrudDao dao, final CrudActionListenerCollection crudActionListener) {
-		super(id, entityType, dao);
+	public EditPanel(String id, final Class<T> entityType, final CrudActionListenerCollection crudActionListener) {
+		this(id, entityType, null, crudActionListener);
+	}
+
+	public EditPanel(String id, final Class<T> entityType, T entityObject, final CrudActionListenerCollection crudActionListener) {
+		super(id, entityType);
 
 		this.crudActionListener = crudActionListener;
 
-		if (model == null) {
+		if (entityObject == null) {
 			createOperation = true;
 			try {
-				this.entityModel = new Model<T>(entityType.newInstance());
+				this.entityModel = createInstance(entityType);
 			} catch (Exception e) {
 				throw new IntegrationException(e);
 			}
 		} else {
-			this.entityModel = model;
+			this.entityModel = entityObject;
 		}
 
 		List<String> fields = CrudUtil.getPropertiesNameFromBean(entityType);
 
-		Form<T> form = new Form<T>("form", entityModel);
+		Form<T> form = new Form<T>("form", new Model<T>(entityModel));
 		form.setOutputMarkupPlaceholderTag(true);
 		form.add(generateItems("items", fields));
 
@@ -79,21 +84,22 @@ public class EditPanel<T extends BasicEntity> extends BasicCrudModalPanel<T> {
 
 			private static final long serialVersionUID = -5561784201214880067L;
 
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void populateItem(ListItem<String> listItem) {
 				PropertyDescriptor propertyDescriptor = CrudUtil.getPropertyFromBean(getEntityType(), listItem.getModelObject());
 
 				WebMarkupContainer formComponent = null;
 				@SuppressWarnings("rawtypes")
-				PropertyModel propertyModel = new PropertyModel(entityModel.getObject(), propertyDescriptor.getName());
+				PropertyModel propertyModel = new PropertyModel(entityModel, propertyDescriptor.getName());
 				Class<?> propertyType = propertyDescriptor.getPropertyType();
 				if (createOperation && BasicEntity.class.isAssignableFrom(propertyType)) {
 					List<?> list = getDao().getList(propertyType);
-					formComponent = new CrudComboBoxField("formComponent", propertyModel, list,propertyType);
+					formComponent = new CrudComboBoxField("formComponent", propertyModel, list, propertyType);
 				} else if (propertyDescriptor.getPropertyType().isAssignableFrom(Date.class)) {
 					formComponent = new CrudDateTextField("formComponent", propertyModel);
 				} else {
-					formComponent = new CrudTextField("formComponent", String.class, propertyModel);
+					formComponent = new CrudTextField("formComponent", propertyModel.getObjectClass(), propertyModel);
 				}
 
 				listItem.add(new Label("label", propertyDescriptor.getName()));
@@ -119,9 +125,9 @@ public class EditPanel<T extends BasicEntity> extends BasicCrudModalPanel<T> {
 	private class CrudDateTextField extends Panel {
 		private static final long serialVersionUID = 1L;
 
-		public CrudDateTextField(String id, IModel<?> model) {
+		public CrudDateTextField(String id, IModel<Date> model) {
 			super(id);
-			DateTextField dateTextField = new DateTextField("field");
+			DateTextField dateTextField = new DateTextField("field",model);
 			DatePicker datePicker = new DatePicker();
 			datePicker.setShowOnFieldClick(true);
 			dateTextField.add(datePicker);
@@ -135,7 +141,7 @@ public class EditPanel<T extends BasicEntity> extends BasicCrudModalPanel<T> {
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public CrudComboBoxField(String id, IModel<?> model, List<?> choices, Class<?> classType) {
 			super(id);
-			DropDownChoice dropDownChoice = new DropDownChoice("field", model, choices);			
+			DropDownChoice dropDownChoice = new DropDownChoice("field", model, choices);
 			final CrudActionEvent<?> actionEvent = CrudUtil.findListener(crudActionListener, classType);
 			if (actionEvent != null) {
 				dropDownChoice.setChoiceRenderer(new IChoiceRenderer() {

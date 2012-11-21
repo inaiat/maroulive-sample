@@ -16,11 +16,6 @@ public class AddressPage extends CrudPage<Address> {
 	@Override
 	public Class<Address> getDomainClass() {
 		return Address.class;
-	}
-	
-	@Override
-	public CrudDao getDao() {
-		return crudDao;
-	}
+	}	
 
 }

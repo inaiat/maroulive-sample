@@ -17,10 +17,10 @@ public class ListPanel<T extends BasicEntity> extends BasicCrudPanel<T> {
 
 	private static final long serialVersionUID = -2915941722094627572L;
 
-	private final CrudActionListenerCollection crudActionListener;
+	private final CrudActionListenerCollection crudActionListener;	
 
-	public ListPanel(String id, final Class<T> entityType, CrudDao dao, final CrudActionListenerCollection crudActionListener) {
-		super(id, entityType, dao);
+	public ListPanel(String id, final Class<T> entityType, final CrudActionListenerCollection crudActionListener) {
+		super(id, entityType);
 		this.crudActionListener = crudActionListener;
 		List<String> fields = CrudUtil.getPropertiesNameFromBean(entityType);
 		add(generateTableHeader("headView", fields));

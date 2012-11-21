@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  under the License.
  */
-package br.com.digilabs.dao;
+package br.com.digilabs.wicket.crud;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,7 +25,6 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import br.com.digilabs.wicket.crud.CrudDao;
 
 @Repository
 public class CrudDaoImpl implements CrudDao {
